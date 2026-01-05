@@ -29,6 +29,21 @@
             <input type="text" name="localisation" value="{{ old('localisation') }}" required>
         </div>
 
+                <!-- Petit ajout optionnel -->
+        <div class="form-group">
+            <label>Localisation <small>(vous pouvez copier-coller depuis Google Maps)</small></label>
+            <input type="text" 
+                name="localisation" 
+                placeholder="Ex: 123 Rue Exemple, lome, togo"
+                value="{{ old('localisation') }}"
+                required>
+            <small class="text-gray-500">
+                Vous pouvez trouver l'adresse précise sur 
+                <a href="https://maps.google.com" target="_blank" class="text-blue-600">Google Maps</a> 
+                et la coller ici
+            </small>
+        </div>
+
         <div class="form-group">
             <label><i class="fas fa-align-left"></i> Description</label>
             <textarea name="description" rows="4">{{ old('description') }}</textarea>

@@ -81,9 +81,7 @@ Route::middleware(['auth', 'regisseur'])->prefix('regisseur')->name('regisseur.'
     Route::post('/rapports/marche/imprimer', [RapportController::class, 'imprimerRapportMarche'])->name('rapports.marche.imprimer');
     Route::post('/rapports/synthese/imprimer', [RapportController::class, 'imprimerRapportSynthese'])->name('rapports.synthese.imprimer');
     
-    // Optionnel: Rapport par zone (si vous avez cette vue)
-    // Route::get('/rapports/zone', [RapportController::class, 'rapportZone'])->name('rapports.zone');
-    // Route::post('/rapports/zone/imprimer', [RapportController::class, 'imprimerRapportZone'])->name('rapports.zone.imprimer');
+    
 });
 
 // ==================== ROUTES AGENT ====================

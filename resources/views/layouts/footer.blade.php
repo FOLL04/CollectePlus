@@ -18,7 +18,7 @@
     }
 
     .footer {
-        background: linear-gradient(135deg, #0f766e 0%, #047857 100%);
+        background:linear-gradient(180deg, #0f766e 0%, #047857 100%);
         color: rgba(255, 255, 255, 0.9);
         text-align: center;
         padding: 14px 20px;

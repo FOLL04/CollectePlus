@@ -29,6 +29,7 @@ class CollecteController extends Controller
         $collectes = Collecte::with(['agent', 'place'])
             ->when($mois, fn($q) => $q->whereYear('date_collecte', substr($mois, 0, 4))
                                       ->whereMonth('date_collecte', substr($mois, 5, 2)))
+                                     
             ->when($agentId, fn($q) => $q->where('agent_id', $agentId))
             ->when($placeId, fn($q) => $q->where('place_id', $placeId))
             ->orderByDesc('date_collecte')

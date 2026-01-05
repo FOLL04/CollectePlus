@@ -1,606 +1,517 @@
 @extends('layouts.app')
 
-@section('title', 'Gestion des Marchés')
-
 @section('content')
-<div class="container-fluid px-4">
-    <!-- Header avec bouton création -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h2 mb-1 text-dark fw-bold">Gestion des Marchés</h1>
-            
-        </div>
-        <a href="{{ route('marches.create') }}" class="btn btn-success btn-lg fw-bold">
-            <i class="fas fa-plus me-2"></i>Nouveau Marché
-        </a>
-    </div>
+    <title>Gestion des Marchés</title>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg" style="margin-bottom: 5%">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h1 class="text-3xl font-bold">
+                            <i class="fas fa-store mr-3"></i>Gestion des Marchés
+                        </h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center bg-white bg-opacity-20 p-3 rounded-lg">
+                            <p class="text-sm opacity-90">Marchés ce mois</p>
+                            <p class="text-2xl font-bold">{{ $recentMarchesCount }}</p>
+                        </div>
+                         <button class="btn" style="box-shadow: #e5e7eb hover:bg-gray-200 transition duration-200">
+                        <a href="{{ route('marches.create') }}" class="action-btn info">
+                            <i class="fas fa-store-alt"></i>
+                            <span>Nouveau marché</span>
+                        </a>
+                         </button>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    <!-- 4 Cartes de statistiques -->
-    <div class="row mb-4 stats-row">
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 h-100">
-                <div class="card-body text-center">
-                    <div class="stat-icon bg-green-soft mb-3">
-                        <i class="fas fa-calendar-alt text-green"></i>
+        <!-- Statistiques -->
+        <div class="container mx-auto px-4 py-6 -mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card bg-white rounded-xl shadow-lg p-6 fade-in">
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 p-4 rounded-lg mr-4">
+                            <i class="fas fa-map-marked-alt text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Marchés</p>
+                            <p class="text-3xl font-bold text-gray-800">{{ $marches->total() }}</p>
+                        </div>
                     </div>
-                    <h5 class="text-muted mb-2">Créés ce mois</h5>
-                    <h2 class="mb-0 fw-bold text-green">{{ $recentMarchesCount }}</h2>
-                    <small class="text-muted">Nouveaux marchés</small>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Actifs</span>
+                            <span>{{ $marches->total() }}</span>
+                        </div>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card bg-white rounded-xl shadow-lg p-6 fade-in delay-1">
+                    <div class="flex items-center">
+                        <div class="bg-green-100 p-4 rounded-lg mr-4">
+                            <i class="fas fa-layer-group text-green-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Zones moyennes par marché</p>
+                            <p class="text-3xl font-bold text-gray-800">
+                                @php
+                                    $avgZones = $marches->count() > 0 ? round($marches->sum('zones_count') / $marches->count(), 1) : 0;
+                                    echo $avgZones;
+                                @endphp
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Distribution</span>
+                            <span>{{ $marches->sum('zones_count') }} total</span>
+                        </div>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-fill" style="width: {{ min(100, ($avgZones / 10) * 100) }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card bg-white rounded-xl shadow-lg p-6 fade-in delay-2">
+                    <div class="flex items-center">
+                        <div class="bg-purple-100 p-4 rounded-lg mr-4">
+                            <i class="fas fa-parking text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Places moyennes par marché</p>
+                            <p class="text-3xl font-bold text-gray-800">
+                                @php
+                                    $avgPlaces = $marches->count() > 0 ? round($marches->sum('places_count') / $marches->count(), 0) : 0;
+                                    echo $avgPlaces;
+                                @endphp
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Occupation</span>
+                            <span>{{ $marches->sum('places_count') }} total</span>
+                        </div>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-fill" style="width: {{ min(100, ($avgPlaces / 500) * 100) }}%"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 h-100">
-                <div class="card-body text-center">
-                    <div class="stat-icon bg-green-soft mb-3">
-                        <i class="fas fa-map-marked-alt text-green"></i>
-                    </div>
-                    <h5 class="text-muted mb-2">Zones</h5>
-                    <h2 class="mb-0 fw-bold text-green">{{ $marches->sum('zones_count') }}</h2>
-                    <small class="text-muted">Total de toutes les zones</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 h-100">
-                <div class="card-body text-center">
-                    <div class="stat-icon bg-green-soft mb-3">
-                        <i class="fas fa-warehouse text-green"></i>
-                    </div>
-                    <h5 class="text-muted mb-2">Hangars</h5>
-                    <h2 class="mb-0 fw-bold text-green">{{ $marches->sum('hangars_count') }}</h2>
-                    <small class="text-muted">Total de tous les hangars</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 h-100">
-                <div class="card-body text-center">
-                    <div class="stat-icon bg-green-soft mb-3">
-                        <i class="fas fa-parking text-green"></i>
-                    </div>
-                    <h5 class="text-muted mb-2">Places</h5>
-                    <h2 class="mb-0 fw-bold text-green">{{ $marches->sum('places_count') }}</h2>
-                    <small class="text-muted">Total de toutes les places</small>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    
-
-    <!-- Tableau des marchés -->
-    <div class="card border-0">
-        <div class="card-header bg-white border-0 py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">
-                    <i class="fas fa-list me-2 text-green"></i>
-                    Liste des Marchés
-                </h5>
-                <div class="text-muted">
-                    {{ $marches->total() }} marchés au total
-                </div>
-            </div>
-        </div>
-        <div class="card-body p-0">
-            @if($marches->isEmpty())
-                <div class="text-center py-5">
-                    <div class="mb-4">
-                        <i class="fas fa-store-alt fa-4x text-green opacity-50"></i>
+            <!-- Liste des marchés -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden fade-in delay-3">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <h2 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-list mr-2"></i>Liste des Marchés
+                        </h2>
+                        
+                        <div class="mt-3 md:mt-0">
+                            <div class="relative">
+                                <input type="text" placeholder="Rechercher un marché..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                        </div>
                     </div>
-                    <h4 class="text-muted fw-bold mb-3">Aucun marché trouvé</h4>
-                    <p class="text-muted mb-4">Commencez par créer votre premier marché</p>
-                    <a href="{{ route('marches.create') }}" class="btn btn-success btn-lg">
-                        <i class="fas fa-plus me-2"></i>Créer un marché
-                    </a>
                 </div>
-            @else
-                <div class="table-container">
-                    <table class="market-table">
-                        <thead>
+                
+                <div class="responsive-table">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="text-start">Nom du Marché</th>
-                                <th>Date de création</th>
-                                <th class="text-center">Zones</th>
-                                <th class="text-center">Hangars</th>
-                                <th class="text-center">Places</th>
-                                <th class="text-end">Actions</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Nom du Marché
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Zones
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Hangars
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Places
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Date de création
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach($marches as $marche)
-                                <tr>
-                                    <td class="market-name">
-                                        <div class="market-info">
-                                            <div class="market-icon">
-                                                <i class="fas fa-store"></i>
-                                            </div>
-                                            <div class="market-details">
-                                                <h6>{{ $marche->nom ?? 'Marché sans nom' }}</h6>
-                                                @if($marche->description)
-                                                    <small>{{ Str::limit($marche->description, 60) }}</small>
-                                                @endif
-                                            </div>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($marches as $marche)
+                            <tr class="hover:bg-gray-50 transition duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                                            <i class="fas fa-store text-indigo-600"></i>
                                         </div>
-                                    </td>
-                                    <td class="date-cell">
-                                        <div class="date-info">
-                                            <span class="date">{{ $marche->created_at->format('d/m/Y') }}</span>
-                                            <small class="time-ago">{{ $marche->created_at->diffForHumans() }}</small>
+                                        <div>
+                                            <div class="font-medium text-gray-900">{{ $marche->nom ?? 'Marché #' . $marche->id }}</div>
+                                            <div class="text-sm text-gray-500">ID: {{ $marche->id }}</div>
                                         </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="count-badge zones">{{ $marche->zones_count }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="count-badge hangars">{{ $marche->hangars_count }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="count-badge places">{{ $marche->places_count }}</span>
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="action-buttons">
-                                            <a href="{{ route('marches.show', $marche->id) }}" 
-                                               class="btn-view">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{{ route('marches.edit', $marche->id) }}" 
-                                               class="btn-edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <form method="POST" action="{{ route('marches.destroy', $marche->id) }}" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn-delete" onclick="return confirm('Supprimer ce marché ?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center justify-center bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                            <i class="fas fa-layer-group mr-1"></i> {{ $marche->zones_count }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center justify-center bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                            <i class="fas fa-warehouse mr-1"></i> {{ $marche->hangars_count }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center justify-center bg-purple-100 text-purple-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                            <i class="fas fa-parking mr-1"></i> {{ $marche->places_count }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <i class="far fa-calendar-alt mr-2 text-gray-400"></i>
+                                        {{ $marche->created_at->format('d/m/Y') }}
+                                    </div>
+                                    <div class="text-xs text-gray-400 mt-1">
+                                        {{ $marche->created_at->diffForHumans() }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <button class="text-indigo-600 hover:text-indigo-900 p-2 rounded-lg hover:bg-indigo-50 transition duration-200" title="Voir détails">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="text-green-600 hover:text-green-900 p-2 rounded-lg hover:bg-green-50 transition duration-200" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50 transition duration-200" title="Supprimer">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center">
+                                    <div class="text-gray-400">
+                                        <i class="fas fa-inbox text-4xl mb-4"></i>
+                                        <p class="text-xl">Aucun marché trouvé</p>
+                                        <p class="mt-2">Commencez par ajouter un nouveau marché</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
-            @endif
-        </div>
-        
-        <!-- Pagination -->
-        @if($marches->hasPages())
-            <div class="card-footer bg-white border-top py-3">
-                <div class="d-flex justify-content-center">
-                    {{ $marches->links() }}
+                
+                <!-- Pagination -->
+                @if($marches->hasPages())
+                <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <div class="mb-4 md:mb-0 text-sm text-gray-700">
+                            Affichage de <span class="font-semibold">{{ $marches->firstItem() }}</span> à <span class="font-semibold">{{ $marches->lastItem() }}</span> sur <span class="font-semibold">{{ $marches->total() }}</span> marchés
+                        </div>
+                        
+                        <div class="pagination">
+                            @if($marches->onFirstPage())
+                            <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-chevron-left mr-1"></i> Précédent
+                            </span>
+                            @else
+                            <a href="{{ $marches->previousPageUrl() }}" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200">
+                                <i class="fas fa-chevron-left mr-1"></i> Précédent
+                            </a>
+                            @endif
+                            
+                            <span class="mx-2 text-gray-500">|</span>
+                            
+                            @if($marches->hasMorePages())
+                            <a href="{{ $marches->nextPageUrl() }}" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200">
+                                Suivant <i class="fas fa-chevron-right ml-1"></i>
+                            </a>
+                            @else
+                            <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">
+                                Suivant <i class="fas fa-chevron-right ml-1"></i>
+                            </span>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <!-- Pages numérotées -->
+                    <div class="flex justify-center mt-4">
+                        @foreach($marches->getUrlRange(1, $marches->lastPage()) as $page => $url)
+                            @if($page == $marches->currentPage())
+                            <span class="mx-1 px-3 py-1 bg-indigo-600 text-white rounded-lg font-semibold">{{ $page }}</span>
+                            @else
+                            <a href="{{ $url }}" class="mx-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200">{{ $page }}</a>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+
+            <!-- Espacement entre le titre et les cartes -->
+            <div class="mt-8 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 text-center">
+                    <i class="fas fa-chart-bar mr-3"></i>Statistiques Détaillées
+                </h2>
+                <p class="text-gray-600 text-center mt-2">Analyse complète des capacités de vos marchés</p>
+            </div>
+            
+            <!-- Informations complémentaires -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">
+                        <i class="fas fa-chart-line mr-2 text-green-500"></i>Résumé des capacités
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Zones totales</span>
+                                <span class="font-semibold">{{ $marches->sum('zones_count') }}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ $marches->count() > 0 ? min(100, ($marches->sum('zones_count') / ($marches->count() * 10)) * 100) : 0 }}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Hangars totaux</span>
+                                <span class="font-semibold">{{ $marches->sum('hangars_count') }}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ $marches->count() > 0 ? min(100, ($marches->sum('hangars_count') / ($marches->count() * 20)) * 100) : 0 }}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Places totales</span>
+                                <span class="font-semibold">{{ $marches->sum('places_count') }}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ $marches->count() > 0 ? min(100, ($marches->sum('places_count') / ($marches->count() * 500)) * 100) : 0 }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">
+                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>Informations clés
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                            <i class="fas fa-calendar-check text-blue-500 mr-3"></i>
+                            <div>
+                                <p class="font-medium text-gray-800">Marchés récents</p>
+                                <p class="text-sm text-gray-600">{{ $recentMarchesCount }} créés ce mois</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                            <i class="fas fa-warehouse text-green-500 mr-3"></i>
+                            <div>
+                                <p class="font-medium text-gray-800">Capacité moyenne</p>
+                                <p class="text-sm text-gray-600">{{ $marches->count() > 0 ? round($marches->sum('hangars_count') / $marches->count(), 1) : 0 }} hangars par marché</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-purple-50 rounded-lg">
+                            <i class="fas fa-chart-pie text-purple-500 mr-3"></i>
+                            <div>
+                                <p class="font-medium text-gray-800">Rendement d'espace</p>
+                                <p class="text-sm text-gray-600">{{ $marches->count() > 0 ? round($marches->sum('places_count') / $marches->count(), 0) : 0 }} places en moyenne</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        @endif
+        </div>
     </div>
-</div>
-<style>
-    /* Variables inspirées du dashboard */
-    :root {
-        --vert-dashboard: #10b981;
-        --vert-dashboard-clair: #d1fae5;
-        --gris-fond: #f9fafb;
-        --gris-clair: #f3f4f6;
-        --gris-border: #e5e7eb;
-        --gris-texte: #6b7280;
-        --texte-noir: #111827;
-        --blanc: #ffffff;
-        --ombre-legere: 0 1px 3px rgba(0, 0, 0, 0.1);
-        --ombre: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
 
-    /* Fond général */
-    body {
-        background-color: var(--gris-fond);
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        color: var(--texte-noir);
-    }
-
-    .container-fluid {
-        padding: 2rem;
-    }
-
-    /* Header */
-    .d-flex.justify-content-between.align-items-center.mb-4 {
-        margin-bottom: 3rem !important;
-    }
-
-    .h2.mb-1 {
-        font-size: 1.875rem;
-        font-weight: 700;
-        color: var(--texte-noir);
-        margin-bottom: 2.5rem !important;
-    }
-
-    .text-muted.mb-0 {
-        color: var(--gris-texte) !important;
-        font-size: 1.125rem;
-        margin: 0;
-    }
-
-    /* Bouton nouveau marché */
-    .btn-success.btn-lg {
-        background-color: var(--vert-dashboard);
-        border: none;
-        border-radius: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        font-weight: 500;
-        font-size: 1rem;
-        transition: all 0.2s;
-        box-shadow: var(--ombre);
+    <!-- Styles CSS -->
+    <style>
+        /* CSS personnalisé */
+        .gradient-bg {
+            background: linear-gradient(180deg, #0f766e 0%, #047857 100%);
+        }
         
+        .card-hover {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
         
-    }
-
-    .btn-success.btn-lg:hover {
-        background-color: #0da271;
-        transform: translateY(-1px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-     
-    }
-
-    /* 4 cartes de statistiques */
-    .stats-row {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 3rem;
-    }
-
-    .stats-row .col-xl-3 {
-        margin: 0;
-        padding: 0;
-    }
-
-    .card.border-0.h-100 {
-        background: var(--blanc);
-        border-radius: 0.75rem;
-        border: 1px solid var(--gris-border);
-        box-shadow: var(--ombre-legere);
-        transition: all 0.2s;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    .card.border-0.h-100:hover {
-        box-shadow: var(--ombre);
-        transform: translateY(-2px);
-        border-color: var(--vert-dashboard-clair);
-    }
-
-    .card-body.text-center {
-        padding: 1.5rem !important;
-    }
-
-    .stat-icon {
-        width: 4rem;
-        height: 4rem;
-        border-radius: 0.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 1.5rem;
-        color: var(--vert-dashboard);
-        background: var(--vert-dashboard-clair);
-    }
-
-    .text-green {
-        color: var(--vert-dashboard) !important;
-    }
-
-    .text-muted.mb-2 {
-        color: var(--gris-texte) !important;
-        font-size: 0.875rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-        margin-bottom: 0.5rem !important;
-    }
-
-    .fw-bold.text-green {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin: 0.5rem 0;
-        line-height: 1;
-    }
-
-    .card-body.text-center small {
-        color: var(--gris-texte);
-        font-size: 0.875rem;
-        display: block;
-        margin-top: 0.25rem;
-    }
-
-    /* Tableau */
-    .card.border-0 {
-        background: var(--blanc);
-        border-radius: 0.75rem;
-        box-shadow: var(--ombre);
-        border: 1px solid var(--gris-border);
-        overflow: hidden;
-    }
-
-    .card-header.bg-white.border-0.py-3 {
-        padding: 1.5rem 1.5rem 0 1.5rem !important;
-        border-bottom: 1px solid var(--gris-border);
-        background: var(--blanc) !important;
-    }
-
-    .card-header h5 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--texte-noir);
-        margin: 0;
-    }
-
-    .card-header .text-muted {
-        color: var(--gris-texte) !important;
-        font-size: 0.875rem;
-        background: var(--gris-fond);
-        padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
-        border: 1px solid var(--gris-border);
-    }
-
-    /* Table */
-    .table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .market-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.875rem;
-    }
-
-    .market-table thead {
-        background: var(--gris-fond);
-    }
-
-    .market-table th {
-        padding: 1rem 1.5rem;
-        text-align: left;
-        font-weight: 600;
-        color: var(--gris-texte);
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-bottom: 1px solid var(--gris-border);
-        white-space: nowrap;
-    }
-
-    .market-table tbody tr {
-        border-bottom: 1px solid var(--gris-border);
-        transition: background 0.15s;
-    }
-
-    .market-table tbody tr:hover {
-        background: var(--gris-fond);
-    }
-
-    .market-table td {
-        padding: 1rem 1.5rem;
-        vertical-align: middle;
-        color: var(--texte-noir);
-    }
-
-    /* Infos marché */
-    .market-info {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .market-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        background: var(--vert-dashboard-clair);
-        border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--vert-dashboard);
-        flex-shrink: 0;
-    }
-
-    .market-details h6 {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--texte-noir);
-        margin: 0 0 0.125rem 0;
-        line-height: 1.4;
-    }
-
-    .market-details small {
-        font-size: 0.75rem;
-        color: var(--gris-texte);
-        line-height: 1.4;
-        display: block;
-    }
-
-    /* Date */
-    .date-info {
-        display: flex;
-        flex-direction: column;
-        gap: 0.125rem;
-    }
-
-    .date-info .date {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--texte-noir);
-    }
-
-    .date-info .time-ago {
-        font-size: 0.75rem;
-        color: var(--gris-texte);
-    }
-
-    /* Badges */
-    .count-badge {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        min-width: 2.5rem;
-        text-align: center;
-    }
-
-    .count-badge.zones {
-        background: var(--vert-dashboard-clair);
-        color: var(--vert-dashboard);
-    }
-
-    .count-badge.hangars {
-        background: #fef3c7;
-        color: #d97706;
-    }
-
-    .count-badge.places {
-        background: #dbeafe;
-        color: #1d4ed8;
-    }
-
-    /* Actions */
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: flex-end;
-    }
-
-    .btn-view, .btn-edit, .btn-delete {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 0.375rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        border: 1px solid var(--gris-border);
-        background: var(--blanc);
-        transition: all 0.15s;
-    }
-
-    .btn-view {
-        color: #2563eb;
-    }
-
-    .btn-edit {
-        color: #d97706;
-    }
-
-    .btn-delete {
-        color: #dc2626;
-    }
-
-    .btn-view:hover {
-        background: #2563eb;
-        color: white;
-        border-color: #2563eb;
-    }
-
-    .btn-edit:hover {
-        background: #d97706;
-        color: white;
-        border-color: #d97706;
-    }
-
-    .btn-delete:hover {
-        background: #dc2626;
-        color: white;
-        border-color: #dc2626;
-    }
-
-    /* Pagination */
-    .card-footer.bg-white.border-top.py-3 {
-        padding: 1.5rem !important;
-        border-top: 1px solid var(--gris-border);
-    }
-
-    .pagination {
-        margin: 0;
-    }
-
-    .pagination .page-link {
-        border: 1px solid var(--gris-border);
-        color: var(--gris-texte);
-        border-radius: 0.375rem;
-        padding: 0.5rem 0.75rem;
-        margin: 0 0.125rem;
-        font-size: 0.875rem;
-    }
-
-    .pagination .page-item.active .page-link {
-        background: var(--vert-dashboard);
-        border-color: var(--vert-dashboard);
-        color: white;
-    }
-
-    /* État vide */
-    .text-center.py-5 {
-        padding: 4rem 2rem !important;
-    }
-
-    .fa-store-alt {
-        color: var(--vert-dashboard-clair);
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 1200px) {
-        .stats-row {
-            grid-template-columns: repeat(2, 1fr);
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
         }
-    }
-
-    @media (max-width: 768px) {
-        .container-fluid {
-            padding: 1rem;
+        
+        .stat-card {
+            transition: transform 0.3s ease;
         }
-
-        .stats-row {
-            grid-template-columns: 1fr;
-            gap: 1rem;
+        
+        .stat-card:hover {
+            transform: scale(1.03);
         }
-
-        .d-flex.justify-content-between.align-items-center.mb-4 {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
+        
+        .pagination .page-link {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 6px;
+            transition: all 0.3s;
         }
-
-        .btn-success.btn-lg {
-            width: 100%;
-            justify-content: center;
+        
+        .pagination .page-link:hover {
+            background-color: #667eea;
+            color: white;
         }
-
-        .market-table {
-            font-size: 0.75rem;
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #e5e7eb;
         }
-
-        .market-table th,
-        .market-table td {
-            padding: 0.75rem;
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
         }
-
-        .action-buttons {
-            justify-content: center;
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-    }
-
-    @media (max-width: 480px) {
-        .card-body.text-center {
-            padding: 1rem !important;
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
         }
-
-        .fw-bold.text-green {
-            font-size: 2rem;
+        
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .responsive-table {
+                display: block;
+                overflow-x: auto;
+            }
         }
-    }
-</style>
+        
+        /* Espacements améliorés */
+        .spacing-section {
+            margin-top: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+        
+        /* Effets de survol pour les lignes du tableau */
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        tbody tr:hover {
+            background-color: #f7fafc;
+            transform: translateX(5px);
+        }
+        
+        /* Boutons avec effet de profondeur */
+        .btn-depth {
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: all 0.15s ease;
+        }
+        
+        .btn-depth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* Badges avec effet de lueur */
+        .badge-glow {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
+        }
+        
+        .badge-glow:hover {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8);
+        }
+    </style>
+
+    <!-- Scripts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        // Animation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation des éléments
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(el => {
+                el.style.opacity = 1;
+            });
+            
+            // Gestion des interactions
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('click', function(e) {
+                    if (!e.target.closest('button')) {
+                        this.classList.toggle('bg-indigo-50');
+                    }
+                });
+            });
+            
+            // Recherche (exemple simple)
+            const searchInput = document.querySelector('input[type="text"]');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('tbody tr');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
 @endsection

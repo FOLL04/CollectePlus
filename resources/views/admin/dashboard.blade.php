@@ -86,183 +86,74 @@
         </div>
     </div>
 
-    <!-- Contenu principal - Toute la largeur en dessous -->
-    <div class="dashboard-main">
-        <!-- Graphique des collectes -->
-        <div class="card chart-section">
-            <div class="card-header">
-                <h3><i class="fas fa-chart-line"></i> Activité des collectes</h3>
-                <select class="period-select">
-                    <option value="7">7 jours</option>
-                    <option value="30">30 jours</option>
-                    <option value="90">90 jours</option>
-                </select>
-            </div>
-            <div class="card-body">
-                <div class="chart-container">
-                    <div class="chart-placeholder">
-                        <i class="fas fa-chart-bar"></i>
-                        <p>Graphique des collectes</p>
-                        <small>Visualisation des données sur la période sélectionnée</small>
+    <!-- Contenu principal en deux colonnes -->
+    <div class="content-grid">
+        <!-- Colonne de gauche -->
+        <div class="left-column">
+            <!-- Marchés actifs -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-store"></i> Marchés actifs</h3>
+                    <a href="{{ route('marches.index') }}" class="btn-link">Voir tout</a>
+                </div>
+                <div class="card-body">
+                    <div class="marches-list">
+                        @forelse($marches ?? [] as $marche)
+                        <div class="marche-item">
+                            <div class="marche-icon">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="marche-info">
+                                <h4>{{ $marche->nom }}</h4>
+                                <div class="marche-meta">
+                                    <span><i class="fas fa-users"></i> {{ $marche->agents_count ?? 0 }} agents</span>
+                                    <span><i class="fas fa-truck"></i> {{ $marche->collectes_count ?? 0 }} coll.</span>
+                                </div>
+                            </div>
+                            <div class="marche-status">
+                                @if(($marche->collectes_count ?? 0) > 0)
+                                <span class="badge active">Actif</span>
+                                @else
+                                <span class="badge inactive">Inactif</span>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <div class="empty-state">
+                            <i class="fas fa-store-slash"></i>
+                            <p>Aucun marché</p>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
-                
             </div>
         </div>
 
-        <!-- Deux colonnes pour le reste -->
-        <div class="content-grid">
-            <!-- Colonne de gauche -->
-            <div class="left-column">
-                <!-- Dépôts récents -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-hand-holding-usd"></i> Dépôts récents</h3>
-                        <a href="{{ route('depots.index') }}" class="btn-link">Voir tout</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="depots-list">
-                            @forelse($recentDepots ?? [] as $depot)
-                            <div class="depot-item">
-                                <div class="depot-avatar">
-                                    <div class="avatar-circle">
-                                        {{ substr($depot->agent->name ?? 'A', 0, 1) }}
-                                    </div>
-                                </div>
-                                <div class="depot-details">
-                                    <h4>{{ $depot->agent->name ?? 'Agent inconnu' }}</h4>
-                                    <div class="depot-meta">
-                                        <span class="amount">{{ number_format($depot->montant, 0, ',', ' ') }} FCFA</span>
-                                        <span class="time">{{ $depot->created_at->diffForHumans() }}</span>
-                                    </div>
-                                </div>
-                                <div class="depot-status {{ $depot->status }}">
-                                    @if($depot->status == 'completed')
-                                    <i class="fas fa-check-circle"></i>
-                                    @elseif($depot->status == 'pending')
-                                    <i class="fas fa-clock"></i>
-                                    @else
-                                    <i class="fas fa-times-circle"></i>
-                                    @endif
-                                </div>
-                            </div>
-                            @empty
-                            <div class="empty-state">
-                                <i class="fas fa-hand-holding-usd"></i>
-                                <p>Aucun dépôt récent</p>
-                            </div>
-                            @endforelse
-                        </div>
-                    </div>
+        <!-- Colonne de droite -->
+        <div class="right-column">
+            <!-- Actions rapides -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-bolt"></i> Actions rapides</h3>
                 </div>
-
-                <!-- Marchés actifs -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-store"></i> Marchés actifs</h3>
-                        <a href="{{ route('marches.index') }}" class="btn-link">Voir tout</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="marches-list">
-                            @forelse($marches ?? [] as $marche)
-                            <div class="marche-item">
-                                <div class="marche-icon">
-                                    <i class="fas fa-store"></i>
-                                </div>
-                                <div class="marche-info">
-                                    <h4>{{ $marche->nom }}</h4>
-                                    <div class="marche-meta">
-                                        <span><i class="fas fa-users"></i> {{ $marche->agents_count ?? 0 }} agents</span>
-                                        <span><i class="fas fa-truck"></i> {{ $marche->collectes_count ?? 0 }} coll.</span>
-                                    </div>
-                                </div>
-                                <div class="marche-status">
-                                    @if(($marche->collectes_count ?? 0) > 0)
-                                    <span class="badge active">Actif</span>
-                                    @else
-                                    <span class="badge inactive">Inactif</span>
-                                    @endif
-                                </div>
-                            </div>
-                            @empty
-                            <div class="empty-state">
-                                <i class="fas fa-store-slash"></i>
-                                <p>Aucun marché</p>
-                            </div>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Colonne de droite -->
-            <div class="right-column">
-                <!-- Activité récente -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-history"></i> Activité récente</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="activity-list">
-                            @foreach($recentActivities ?? [] as $activity)
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    @switch($activity->type)
-                                        @case('collecte')
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-truck"></i>
-                                        </div>
-                                        @break
-                                        @case('depot')
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </div>
-                                        @break
-                                        @case('user')
-                                        <div class="icon-circle bg-info">
-                                            <i class="fas fa-user-plus"></i>
-                                        </div>
-                                        @break
-                                        @default
-                                        <div class="icon-circle bg-gray">
-                                            <i class="fas fa-circle"></i>
-                                        </div>
-                                    @endswitch
-                                </div>
-                                <div class="activity-content">
-                                    <p>{{ $activity->description ?? 'Activité système' }}</p>
-                                    <span class="activity-time">{{ $activity->created_at->diffForHumans() }}</span>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions rapides -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-bolt"></i> Actions rapides</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="quick-actions">
-                            <a href="{{ route('depots.index') }}" class="action-btn primary">
-                                <i class="fas fa-plus-circle"></i>
-                                <span>Voir les Dépôts</span>
-                            </a>
-                            <a href="{{ route('regisseur.rapports.agent') }}" class="action-btn success">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>Générer rapport</span>
-                            </a>
-                            <a href="{{ route('users.create') }}" class="action-btn warning">
-                                <i class="fas fa-user-plus"></i>
-                                <span>Nouvel utilisateur</span>
-                            </a>
-                            <a href="{{ route('marches.create') }}" class="action-btn info">
-                                <i class="fas fa-store-alt"></i>
-                                <span>Nouveau marché</span>
-                            </a>
-                        </div>
+                <div class="card-body">
+                    <div class="quick-actions">
+                        <a href="{{ route('depots.index') }}" class="action-btn primary">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            <span>Gérer les dépôts</span>
+                        </a>
+                        <a href="{{ route('regisseur.rapports.agent') }}" class="action-btn success">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Générer rapport</span>
+                        </a>
+                        <a href="{{ route('users.create') }}" class="action-btn warning">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Nouvel utilisateur</span>
+                        </a>
+                        <a href="{{ route('marches.create') }}" class="action-btn info">
+                            <i class="fas fa-store-alt"></i>
+                            <span>Nouveau marché</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -270,7 +161,7 @@
     </div>
 </div>
 
-<!-- ================== NOUVEAU CSS ================== -->
+<!-- ================== CSS ================== -->
 <style>
 /* Variables globales */
 :root {
@@ -517,154 +408,6 @@
     color: var(--danger);
 }
 
-/* Contenu principal - Toute la largeur */
-.dashboard-main {
-    width: 100%;
-}
-
-/* Section graphique */
-.chart-section {
-    background: white;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--gray-200);
-    margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
-}
-
-.chart-section:hover {
-    box-shadow: var(--shadow);
-}
-
-.chart-section .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.chart-section .card-header h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--gray-900);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.period-select {
-    padding: 8px 16px;
-    border: 1px solid var(--gray-300);
-    border-radius: var(--radius-sm);
-    background: white;
-    color: var(--gray-700);
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.period-select:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-.chart-section .card-body {
-    padding: 24px;
-}
-
-.chart-container {
-    height: 300px;
-    background: var(--gray-50);
-    border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-}
-
-.chart-placeholder {
-    text-align: center;
-    color: var(--gray-400);
-}
-
-.chart-placeholder i {
-    font-size: 64px;
-    margin-bottom: 16px;
-    opacity: 0.5;
-}
-
-.chart-placeholder p {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--gray-600);
-    margin: 0 0 8px 0;
-}
-
-.chart-placeholder small {
-    font-size: 14px;
-    color: var(--gray-500);
-}
-
-.chart-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    background: var(--gray-50);
-    padding: 20px;
-    border-radius: var(--radius);
-    border: 1px solid var(--gray-200);
-}
-
-@media (max-width: 768px) {
-    .chart-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 480px) {
-    .chart-stats {
-        grid-template-columns: 1fr;
-    }
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-item .label {
-    display: block;
-    color: var(--gray-500);
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-}
-
-.stat-item .value {
-    display: block;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--gray-900);
-    line-height: 1;
-}
-
-.trend {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-top: 4px;
-}
-
-.trend.up {
-    background: var(--success-light);
-    color: var(--success);
-}
-
 /* Grille de contenu */
 .content-grid {
     display: grid;
@@ -675,17 +418,18 @@
 @media (max-width: 1024px) {
     .content-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
 }
 
-/* Cartes générales */
+/* Cartes */
 .card {
     background: white;
     border-radius: var(--radius);
     border: 1px solid var(--gray-200);
-    margin-bottom: 24px;
     box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
+    height: 100%;
 }
 
 .card:hover {
@@ -730,80 +474,9 @@
     padding: 24px;
 }
 
-/* Dépôts */
-.depots-list {
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
-.depot-item {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    border-radius: var(--radius-sm);
-    transition: background-color 0.2s ease;
-    margin-bottom: 8px;
-}
-
-.depot-item:hover {
-    background: var(--gray-50);
-}
-
-.avatar-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 16px;
-    margin-right: 16px;
-    flex-shrink: 0;
-}
-
-.depot-details h4 {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--gray-900);
-    margin: 0 0 6px 0;
-    line-height: 1;
-}
-
-.depot-meta {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-}
-
-.depot-meta .amount {
-    color: var(--gray-800);
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.depot-meta .time {
-    color: var(--gray-500);
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.depot-status {
-    margin-left: auto;
-    font-size: 20px;
-    flex-shrink: 0;
-}
-
-.depot-status .fa-check-circle { color: var(--success); }
-.depot-status .fa-clock { color: var(--warning); }
-.depot-status .fa-times-circle { color: var(--danger); }
-
 /* Marchés */
 .marches-list {
-    max-height: 280px;
+    max-height: 400px;
     overflow-y: auto;
     padding-right: 8px;
 }
@@ -881,62 +554,12 @@
     color: var(--gray-500);
 }
 
-/* Activités */
-.activity-list {
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
-.activity-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.activity-item:last-child {
-    border-bottom: none;
-}
-
-.icon-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: white;
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-
-.bg-success { background: var(--success); }
-.bg-primary { background: var(--primary); }
-.bg-info { background: var(--info); }
-.bg-gray { background: var(--gray-400); }
-
-.activity-content p {
-    margin: 0 0 6px 0;
-    color: var(--gray-800);
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
-}
-
-.activity-time {
-    color: var(--gray-500);
-    font-size: 12px;
-    font-weight: 500;
-}
-
 /* Actions rapides */
 .quick-actions {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+    height: 100%;
 }
 
 @media (max-width: 480px) {
@@ -950,21 +573,21 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px 16px;
+    padding: 24px 16px;
     border-radius: var(--radius);
     text-decoration: none;
     transition: all 0.3s ease;
     border: 2px solid transparent;
-    background: var(--gray-50);
+    min-height: 120px;
 }
 
 .action-btn i {
-    font-size: 24px;
+    font-size: 28px;
     margin-bottom: 12px;
 }
 
 .action-btn span {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     text-align: center;
     line-height: 1.3;
@@ -1087,7 +710,7 @@
 }
 </style>
 
-<!-- ================== JavaScript minimal ================== -->
+<!-- ================== JavaScript ================== -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Fonction de rafraîchissement
@@ -1107,9 +730,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Enter') {
                 const query = this.value.trim();
                 if (query) {
-                    // Simuler une recherche
                     console.log('Recherche:', query);
-                    // En production: window.location.href = `/search?q=${encodeURIComponent(query)}`;
                 }
             }
         });
@@ -1118,17 +739,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Animation des statistiques
     const statValues = document.querySelectorAll('.stat-content h3');
     statValues.forEach(stat => {
-        const finalValue = parseInt(stat.textContent.replace(/\D/g, ''));
-        animateCount(stat, 0, finalValue, 1500);
+        const text = stat.textContent;
+        const matches = text.match(/\d+/g);
+        if (matches) {
+            const finalValue = parseInt(matches.join(''));
+            animateCount(stat, 0, finalValue, 1500, text.includes('FCFA'));
+        }
     });
     
-    function animateCount(element, start, end, duration) {
+    function animateCount(element, start, end, duration, isCurrency) {
         let startTimestamp = null;
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
             const value = Math.floor(progress * (end - start) + start);
-            element.textContent = formatNumber(value, element);
+            element.textContent = formatNumber(value, isCurrency);
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             }
@@ -1136,11 +761,9 @@ document.addEventListener('DOMContentLoaded', function() {
         window.requestAnimationFrame(step);
     }
     
-    function formatNumber(num, element) {
-        if (element.closest('.warning')) {
-            return new Intl.NumberFormat('fr-FR').format(num) + ' FCFA';
-        }
-        return new Intl.NumberFormat('fr-FR').format(num);
+    function formatNumber(num, isCurrency) {
+        const formatted = new Intl.NumberFormat('fr-FR').format(num);
+        return isCurrency ? formatted + ' FCFA' : formatted;
     }
 });
 </script>

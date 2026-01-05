@@ -30,8 +30,8 @@
             </div>
             
             <div class="filter-group">
-                <label><span class="label-icon">📅</span> Mois</label>
-                <input type="month" name="mois" value="{{ $mois }}">
+                <label><span class="label-icon">📅</span> Jour et mois</label>
+                <input type="days" name="jour" value="{{ $mois }}">
             </div>
             
             <button type="submit" class="filter-btn">
