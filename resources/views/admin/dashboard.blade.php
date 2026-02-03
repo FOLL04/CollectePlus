@@ -720,7 +720,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             location.reload();
-        }, 300);
+        }, 100);
     };
     
     // Recherche
